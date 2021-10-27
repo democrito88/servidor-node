@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript">
+        const socket = io('http://localhost:3000');
+
+        $(document).ready(function(){
+            $("#chat").submit(function(event){
+                event.preventDefault();
+                var username = document.getElementById("username").value;
+                var message = document.getElementById("message").value;
+
+                document.getElementById("message").value = "";
+
+                if(username.length && message.length){
+                    var data = {
+                        "username": username,
+                        "message": message
+                    };
+                    exibirMensagem(data);
+
+                    socket.emit('envio', data);
+                }
+            });
+        });
+
+        socket.on("recebe", function(mensagens){
+            document.getElementById("conversa").innerHTML = "";
+
+            $.each(mensagens, function(indice, mensagem){
+                exibirMensagem(mensagem);
+            })
+        });
+
+        socket.on("lista", function(usuarios){
+            document.getElementById("membrosOnline").innerHTML = "";
+
+            let ul = document.createElement("ul");
+            $.each(usuarios, function(indice, username){
+                let li = document.createElement("li");
+                li.innerHTML = username;
+                ul.appendChild(li);
+            })
+        });
+
+        socket.on("mensagensAnteriores", function(mensagens){
+            document.getElementById("conversa").innerHTML = "";
+
+            $.each(mensagens, function(indice, mensagem){
+                exibirMensagem(mensagem);
+            })
+        });
+
+        function exibirMensagem(data){
+            $("#conversa").append("<p><span class='col-1 badge bg-primary'>"+data.username+": </span>"+data.message+"</p>");
+        }
+    </script>
+    <title>Document</title>
+</head>
+<body>
+    <header class="jumboron">
+        <h1 class="h1 text-center">Teste de chat com Node.js</h1>
+    </header>
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="form-group p-3 border border-primary input-group rounded-top rounded-5">
+                    <div class="form-group input-group-prepend">
+                        <span class="input-group-text">Seu nome:</span>
+                    </div>
+                    <input class="form-control" type="text" name="username" id="username" placeholder="digite seu nick de usuário">
+                </div>
+                <div id="conversa" class="p-3 border border-primary" style="overflow-y: visible; height: 180%;">
+                </div>
+                <form class="p-3 border border-secondary rounded-bottom rounded-5" id="chat">
+                    
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="message" id="message" placeholder="digite uma mensagem">
+                        <div class="input-group-append">
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi-arrow-right-circle-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2">
+                <div id="membrosOnline" class="border border-secondary">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
