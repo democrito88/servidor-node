@@ -1,3 +1,4 @@
+//npm install express path http socket.io ejs
 const express = require('express');
 const path = require('path');
 
@@ -24,9 +25,14 @@ io.on("connection", function(socket){
 
     socket.on('envio', function(data){
         logMensagens.push(data);
-        usuarios.push(data.username);
-        socket.broadcast.emit("recebe", logMensagens);
+
+        //tira os nomes repetidos dos usuários
+        if(!usuarios.includes(data.username)){
+            usuarios.push(data.username);
+        }
+
         socket.broadcast.emit("lista", usuarios);
+        socket.broadcast.emit("recebe", logMensagens);
     });
     
 })

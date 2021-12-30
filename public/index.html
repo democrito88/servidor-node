@@ -38,17 +38,30 @@
 
             $.each(mensagens, function(indice, mensagem){
                 exibirMensagem(mensagem);
+                
+                $(".toast-container").html(
+                    '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">'
+                        +'<div class="toast-header">'
+                            +'<img src="..." class="rounded me-2" alt="...">'
+                            +'<strong class="me-auto">'+mensagem.username+'</strong>'
+                            +'<small class="text-muted">agora mesmo</small>'
+                            +'<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>'
+                        +'</div>'
+                        +'<div class="toast-body">'
+                            +mensagem.message
+                        +'</div>'
+                    +'</div>');
+
+                    var toast = new bootstrap.Toast($(".toast-container").children(":first"));
+                    toast.show();
             })
         });
 
         socket.on("lista", function(usuarios){
-            document.getElementById("membrosOnline").innerHTML = "";
-
-            let ul = document.createElement("ul");
+            $("#listaOnline").html("");
+            
             $.each(usuarios, function(indice, username){
-                let li = document.createElement("li");
-                li.innerHTML = username;
-                ul.appendChild(li);
+                $("#listaOnline").append("<li class=\"list-group-item\">"+username+"</li>");
             })
         });
 
@@ -61,8 +74,19 @@
         });
 
         function exibirMensagem(data){
-            $("#conversa").append("<p><span class='col-1 badge bg-primary'>"+data.username+": </span>"+data.message+"</p>");
+            $("#conversa").append("<p><span class='col-1 badge bg-primary'>"+data.username+": </span>&nbsp;&nbsp;&nbsp;"+data.message+"</p>");
         }
+
+        /*var toastTrigger = document.getElementById('liveToastBtn')
+        var toastLiveExample = document.getElementById('liveToast')
+        if (toastTrigger) {
+            toastTrigger.addEventListener('click', function () {
+                var toast = new bootstrap.Toast(toastLiveExample)
+
+                toast.show()
+            })
+        }*/
+
     </script>
     <title>Document</title>
 </head>
@@ -73,13 +97,13 @@
     <div class="container pt-5">
         <div class="row">
             <div class="col-md-10">
-                <div class="form-group p-3 border border-primary input-group rounded-top rounded-5">
+                <div class="form-group p-3 border border-primary border-bottom-0 input-group rounded-top rounded-5">
                     <div class="form-group input-group-prepend">
                         <span class="input-group-text">Seu nome:</span>
                     </div>
                     <input class="form-control" type="text" name="username" id="username" placeholder="digite seu nick de usuário">
                 </div>
-                <div id="conversa" class="p-3 border border-primary" style="overflow-y: visible; height: 180%;">
+                <div id="conversa" class="p-3 border border-primary border-bottom-0 overflow-auto" style="max-height: 150px;">
                 </div>
                 <form class="p-3 border border-secondary rounded-bottom rounded-5" id="chat">
                     
@@ -94,10 +118,28 @@
                 </form>
             </div>
             <div class="col-md-2">
-                <div id="membrosOnline" class="border border-secondary">
-
-                </div>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Membros online</h5>
+                        <br>
+                    </div>
+                    <ul id="listaOnline" class="list-group list-group-flush">
+                    </ul>
+                  </div>
             </div>
+        </div>
+    </div>
+    <div class="toast-container fixed-bottom">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto">Nome</strong>
+            <small class="text-muted">agora mesmo</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            mensagem
+          </div>
         </div>
     </div>
 </body>
