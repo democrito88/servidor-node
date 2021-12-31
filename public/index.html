@@ -38,23 +38,27 @@
 
             $.each(mensagens, function(indice, mensagem){
                 exibirMensagem(mensagem);
-                
+            })
+        });
+
+        socket.on("novoUsuario", function(data){
+            if(data.username != ""){
                 $(".toast-container").html(
                     '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">'
                         +'<div class="toast-header">'
                             +'<img src="..." class="rounded me-2" alt="...">'
-                            +'<strong class="me-auto">'+mensagem.username+'</strong>'
+                            +'<strong class="me-auto">'+data.username+'</strong>'
                             +'<small class="text-muted">agora mesmo</small>'
                             +'<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>'
                         +'</div>'
                         +'<div class="toast-body">'
-                            +mensagem.message
+                            +data.message
                         +'</div>'
                     +'</div>');
 
-                    var toast = new bootstrap.Toast($(".toast-container").children(":first"));
-                    toast.show();
-            })
+                var toast = new bootstrap.Toast($(".toast-container").children(":first"));
+                toast.show();
+            }
         });
 
         socket.on("lista", function(usuarios){
@@ -129,18 +133,7 @@
             </div>
         </div>
     </div>
-    <div class="toast-container fixed-bottom">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="toast-header">
-            <img src="..." class="rounded me-2" alt="...">
-            <strong class="me-auto">Nome</strong>
-            <small class="text-muted">agora mesmo</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            mensagem
-          </div>
-        </div>
+    <div class="toast-container fixed-bottom p-5">
     </div>
 </body>
 </html>

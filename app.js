@@ -25,12 +25,15 @@ io.on("connection", function(socket){
 
     socket.on('envio', function(data){
         logMensagens.push(data);
+        let novoUsusario = {username: "", message: ""};
 
         //tira os nomes repetidos dos usuários
         if(!usuarios.includes(data.username)){
             usuarios.push(data.username);
+            novoUsusario = data;
         }
 
+        socket.broadcast.emit("novoUsuario", novoUsusario)
         socket.broadcast.emit("lista", usuarios);
         socket.broadcast.emit("recebe", logMensagens);
     });
